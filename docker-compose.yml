@@ -1,0 +1,19 @@
+services:
+  app:
+    container_name: app
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10000:5173"
+    volumes:
+      - type: bind
+        source: ./app
+        target: /usr/src/app
+    environment:
+      - NODE_ENV=development
+    command: sh -c "cd react-app-ocr && npm install && npm run dev -- --host"
+    stdin_open: true
+    # WSL内のAPIサーバーに接続するため(https://engineering.mobalab.net/2024/07/30/)
+    # extra_hosts:
+    #  - "host.docker.internal:172.31.170.157"

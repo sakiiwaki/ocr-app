@@ -1,0 +1,36 @@
+# 依存関係
+*node_modules/
+.pnpm/
+.yarn/
+
+# ビルド出力
+*dist/
+*.vite/
+
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# ログファイル
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# エディタ/IDE設定
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# Docker関連（必要に応じて）
+.dockerignore
+
+# 不要なプロジェクトファイル
+app/react-app
