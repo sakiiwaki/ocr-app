@@ -14,4 +14,10 @@ $ docker compose exec app bash
 
 #コンテナを修了する時に使用
 $ docker compose down
+
+#実行中のコンテナIDや情報を確かめる
+$ docker ps
+
+#コンテナのログを確かめる
+$ docker logs <containerID>
 ```

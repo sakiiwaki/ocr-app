@@ -1,0 +1,21 @@
+services:
+  api:
+    container_name: api
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - CONDA_DEFAULT_ENV=DECIMER
+    restart: unless-stopped
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+# healthcheck:
+#   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+#   interval: 30s
+#   timeout: 10s
+#   retries: 3

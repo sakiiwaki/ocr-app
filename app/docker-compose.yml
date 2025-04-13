@@ -8,12 +8,16 @@ services:
       - "10000:5173"
     volumes:
       - type: bind
-        source: ./app
+        source: ./
         target: /usr/src/app
     environment:
       - NODE_ENV=development
+      - API_URL=http://backend:8000
     command: sh -c "cd react-app-ocr && npm install && npm run dev -- --host"
     stdin_open: true
-    # WSL内のAPIサーバーに接続するため(https://engineering.mobalab.net/2024/07/30/)
-    # extra_hosts:
-    #  - "host.docker.internal:172.31.170.157"
+    networks:
+      - frontend-network
+
+networks:
+  frontend-network:
+    driver: bridge
