@@ -13,6 +13,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@yamada-ui/dropzone": "^1.1.7",
     "@yamada-ui/react": "^1.7.6",
+    "axios": "^1.8.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.8",

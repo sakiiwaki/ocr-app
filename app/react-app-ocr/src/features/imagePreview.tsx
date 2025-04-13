@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+
 import { BsImage } from "react-icons/bs";
 import { CgDanger } from "react-icons/cg";
 import { MdOutlineFileUpload } from "react-icons/md";
-import { Box, Icon, VStack, HStack, ZStack, Text } from "@yamada-ui/react"
+import { Box, Icon, VStack, HStack, Text } from "@yamada-ui/react"
 import {
 Dropzone,
 IMAGE_ACCEPT_TYPE,
@@ -12,15 +12,23 @@ DropzoneReject,
 DropzoneIdle,
 } from "@yamada-ui/dropzone"
 
+type ImagePreviewProps = {
+  setImage: (image: string | null) => void; // Home.tsxから渡される状態変更関数
+};
 
-export default function ImagePreview() {
+const ImagePreview: React.FC<ImagePreviewProps> = ({ setImage }) => {
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
     // アップロードされた画像を表示する
-    const [image, setImage] = useState(null);
     const handleDrop = (acceptedFiles: any[]) => {
       const file = acceptedFiles[0];
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = () => setImage(reader.result); //　あとでtypesフォルダにUploadedImageのクラスを追加して型指定エラーを消す
+        reader.onload = () => {
+          const result = reader.result as string;
+          setImage(result); // 送信用画像のstateを更新
+          setPreviewImage(result); // プレビュー用のstateを更新
+      }
         reader.readAsDataURL(file);
       }
     };
@@ -28,9 +36,9 @@ export default function ImagePreview() {
     return (
 
         <Dropzone accept={IMAGE_ACCEPT_TYPE} maxSize={3 * 1024 ** 2} onDropAccepted={handleDrop}>
-            {/* アップロードされた画像を表示する */}
-            {image ? (
-                <Box as="img" src={image} alt="Uploaded Preview" sx={{ maxWidth: '100%', maxHeight: '100%' }} />
+            {/* アップロードされた画像を表示する(Max 3MB) */}
+            {previewImage ? (
+                <Box as="img" src={previewImage} alt="Uploaded Preview" sx={{ maxWidth: '100%', maxHeight: '100%' }} />
             ) : (
             <HStack color={["blackAlpha.500", "whiteAlpha.500"]}>
                 {/* icon */}
@@ -55,4 +63,6 @@ export default function ImagePreview() {
             )}
         </Dropzone>
   );
-}
+};
+
+export default ImagePreview;
