@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { BsImage } from "react-icons/bs";
 import { CgDanger } from "react-icons/cg";
@@ -13,25 +13,26 @@ DropzoneIdle,
 } from "@yamada-ui/dropzone"
 
 type ImagePreviewProps = {
-  setImage: (image: string | null) => void; // Home.tsxから渡される状態変更関数
+  setImage: (image: string) => void; // Home.tsxから渡される状態変更関数
+  image?: string; // 既存の画像を表示する場合
 };
 
 const ImagePreview: React.FC<ImagePreviewProps> = ({ setImage }) => {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
 
     // アップロードされた画像を表示する
-    const handleDrop = (acceptedFiles: any[]) => {
+    const handleDrop = useCallback((acceptedFiles: any[]) => {
       const file = acceptedFiles[0];
       if (file && file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = () => {
           const result = reader.result as string;
-          setImage(result); // 送信用画像のstateを更新
           setPreviewImage(result); // プレビュー用のstateを更新
-      }
+          setImage(result); // 送信用画像のstateを更新
+        };
         reader.readAsDataURL(file);
       }
-    };
+    }, [setImage]);
     
     return (
 

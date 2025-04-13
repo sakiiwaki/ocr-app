@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import MenuAppBar from '../components/menuAppBar';
 import ImagePreview from '../features/imagePreview';
@@ -7,18 +7,26 @@ import { Button } from "@yamada-ui/react"
 import { convertImage } from '../api/convertImage';
 
 const Home: React.FC = () => {
-  const [image, setImage] = useState<string | null>(null); // 画像の状態を管理
+  const [texts, setTexts] = useState<string[]>([]); // テキストのリストを管理
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
+  const handleImageSet = useCallback((newImage: string) => {
+      setImagePreviews((prevImagePreviews) => [...prevImagePreviews, newImage]);
+  }, [imagePreviews]);
   
   // convertImage API の呼び出し
   const callConvertImageApi = async () => {
-    if (image) {
+    if (imagePreviews.length > 0) {
       try {
         console.log('API CALL!');
-        const formData = new FormData();
-        formData.append('image', dataURLtoBlob(image), 'image.png'); // 画像データをFormDataに追加
-        const result = await convertImage(formData);
-        console.log('API result:', result);
+        const newTexts: string[] = []; // テキストのリストを初期化
+        // 画像を1つずつAPIに送信
+        for (const image of imagePreviews) {
+            const result = await convertImage(image);
+            console.log('API result:', result);
+            newTexts.push(result.smiles); // APIの結果をリストに追加
+        }
+        setTexts(newTexts); // テキストのリストを更新
       } catch (error) {
         console.error('APIエラー:', error);
       }
@@ -27,18 +35,20 @@ const Home: React.FC = () => {
     }
   };
 
-  // Data URLをBlobオブジェクトに変換する関数
-  const dataURLtoBlob = (dataurl: string) => {
-    const arr = dataurl.split(',');
-    const mime = arr[0].match(/:(.*?);/)?.[1] || '';
-    const bstr = atob(arr[1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-        u8arr[n] = bstr.charCodeAt(n);
-    }
-    return new Blob([u8arr], { type: mime });
-  }
+    // 画像リストを更新する関数
+  //   const handleImagesChange = (newImages: string[]) => {
+  //     setImages(newImages);
+  //     setTexts([]); // 画像が更新されたらテキストをクリア
+  // };
+
+  // const addImage = () => {
+  //   setImages([...images, `Image ${images.length + 1}`]);
+  // };
+
+    // 画像リストに新しい画像を追加
+  //   const handleAddImage = (newImage: string) => {
+  //     setImages((prevImages) => [...prevImages, newImage]);
+  // };
 
   return (
     <>
@@ -50,8 +60,16 @@ const Home: React.FC = () => {
         <VStack>
           <Card  maxW="md">
             <Text>aaa</Text>
-            <ImagePreview setImage={setImage}/>
+            <ImagePreview setImage={handleImageSet}/>
           </Card>
+
+          {/* 追加画像のインポートと表示 */}
+          {imagePreviews.map((index) => (
+            <Card key={index} maxW="md">
+            <Text>kako</Text>
+              <ImagePreview key={index} setImage={handleImageSet} />
+            </Card>
+          ))}
         </VStack>
       </Container>
 
