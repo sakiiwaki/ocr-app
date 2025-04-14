@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 import { BsImage } from "react-icons/bs";
 import { CgDanger } from "react-icons/cg";
@@ -13,13 +13,11 @@ DropzoneIdle,
 } from "@yamada-ui/dropzone"
 
 type ImagePreviewProps = {
-  setImage: (image: string) => void; // Home.tsxから渡される状態変更関数
-  image?: string; // 既存の画像を表示する場合
+  setImage: (image: string | null) => void; // Home.tsxから渡される状態変更関数
+  image?: string | null; // 現在の画像データ（nullの場合は空）
 };
 
-const ImagePreview: React.FC<ImagePreviewProps> = ({ setImage }) => {
-    const [previewImage, setPreviewImage] = useState<string | null>(null);
-
+const ImagePreview: React.FC<ImagePreviewProps> = ({ setImage, image }) => {
     // アップロードされた画像を表示する
     const handleDrop = useCallback((acceptedFiles: any[]) => {
       const file = acceptedFiles[0];
@@ -27,19 +25,18 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ setImage }) => {
         const reader = new FileReader();
         reader.onload = () => {
           const result = reader.result as string;
-          setPreviewImage(result); // プレビュー用のstateを更新
           setImage(result); // 送信用画像のstateを更新
         };
         reader.readAsDataURL(file);
       }
     }, [setImage]);
-    
+
     return (
 
         <Dropzone accept={IMAGE_ACCEPT_TYPE} maxSize={3 * 1024 ** 2} onDropAccepted={handleDrop}>
-            {/* アップロードされた画像を表示する(Max 3MB) */}
-            {previewImage ? (
-                <Box as="img" src={previewImage} alt="Uploaded Preview" sx={{ maxWidth: '100%', maxHeight: '100%' }} />
+            {/* アップロードされた画像を表示する(Max 3MB) 、アップロード待ちのアイコンとメッセージを表示する*/}
+            {image ? (
+                <Box as="img" src={image} alt="Uploaded Preview" sx={{ maxWidth: '100%', maxHeight: '100%' }} />
             ) : (
             <HStack color={["blackAlpha.500", "whiteAlpha.500"]}>
                 {/* icon */}

@@ -7,26 +7,43 @@ import { Button } from "@yamada-ui/react"
 import { convertImage } from '../api/convertImage';
 
 const Home: React.FC = () => {
-  const [texts, setTexts] = useState<string[]>([]); // テキストのリストを管理
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [smiles, setsmiles] = useState<string[]>([]); // テキストのリストを管理
+  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([null]); 
 
-  const handleImageSet = useCallback((newImage: string) => {
-      setImagePreviews((prevImagePreviews) => [...prevImagePreviews, newImage]);
-  }, [imagePreviews]);
+  // 画像を設定する関数
+  const handleImageSet = useCallback(
+    (index: number, newImage: string | null) => {
+      setImagePreviews((prev) => {
+        const updated = [...prev];
+        updated[index] = newImage;
+        // 新しい画像がセットされた場合のみ空のプレビューを追加
+        if (!updated.includes(null)) {
+          updated.push(null);
+        }
+        return updated;
+      });
+    },
+    []
+  );
+
   
   // convertImage API の呼び出し
   const callConvertImageApi = async () => {
-    if (imagePreviews.length > 0) {
+    if (imagePreviews.filter((img) => img !== null).length > 0) {
       try {
         console.log('API CALL!');
-        const newTexts: string[] = []; // テキストのリストを初期化
-        // 画像を1つずつAPIに送信
+        const newsmiles: string[] = [];
+
         for (const image of imagePreviews) {
+          if (image) {
             const result = await convertImage(image);
             console.log('API result:', result);
-            newTexts.push(result.smiles); // APIの結果をリストに追加
+            newsmiles.push(result.smiles); // API結果を保存
+          } else {
+            newsmiles.push(''); // 空の場合は空文字列
+          }
         }
-        setTexts(newTexts); // テキストのリストを更新
+        setsmiles(newsmiles); // テキストのリストを更新
       } catch (error) {
         console.error('APIエラー:', error);
       }
@@ -35,45 +52,28 @@ const Home: React.FC = () => {
     }
   };
 
-    // 画像リストを更新する関数
-  //   const handleImagesChange = (newImages: string[]) => {
-  //     setImages(newImages);
-  //     setTexts([]); // 画像が更新されたらテキストをクリア
-  // };
-
-  // const addImage = () => {
-  //   setImages([...images, `Image ${images.length + 1}`]);
-  // };
-
-    // 画像リストに新しい画像を追加
-  //   const handleAddImage = (newImage: string) => {
-  //     setImages((prevImages) => [...prevImages, newImage]);
-  // };
-
   return (
     <>
-     {/* ヘッダーの表示 */}
+     {/* ヘッダー */}
       <MenuAppBar/>
 
       {/* 画像コンポーネントのインポートと表示 */}
-      <Container centerContent>
+      <Container centerContent size="sm">
         <VStack>
-          <Card  maxW="md">
-            <Text>aaa</Text>
-            <ImagePreview setImage={handleImageSet}/>
-          </Card>
-
-          {/* 追加画像のインポートと表示 */}
-          {imagePreviews.map((index) => (
-            <Card key={index} maxW="md">
-            <Text>kako</Text>
-              <ImagePreview key={index} setImage={handleImageSet} />
+           {imagePreviews.map((image, index) => (
+            <Card key={index}>
+              <ImagePreview
+                image={image}
+                setImage={(newImage) => handleImageSet(index, newImage)}
+              />
+              {/* SMILES表示(変換ボタン押下時) */}
+              {smiles[index] && <Text>{smiles[index]}</Text>}
             </Card>
           ))}
         </VStack>
       </Container>
 
-      {/* 変換ボタンの表示 */}
+      {/* 変換ボタン */}
       <Container centerContent>
         <Button colorScheme="emerald" onClick={callConvertImageApi}>変換</Button>
       </Container>
