@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from 'react';
 
-import MenuAppBar from '@components/menuAppBar';
-import ImagePreview from '@features/imagePreview';
+import MenuAppBar from '@components/MenuAppBar';
+import ImagePreview from '@features/ImagePreview';
 import { Container,Text, Card, VStack } from "@yamada-ui/react"
 import { Button } from "@yamada-ui/react"
-import { convertImage } from '@api/convertImage';
+import { convertImage } from '@api/ConvertImage';
 
 const Home: React.FC = () => {
   const [smiles, setsmiles] = useState<string[]>([]); // テキストのリストを管理
