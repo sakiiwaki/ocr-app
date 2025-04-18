@@ -26,26 +26,36 @@ const Home: React.FC = () => {
     []
   );
 
-  // convertImage API の呼び出し
+  // convertImage API の呼び出しと逐次更新
   const callConvertImageApi = async () => {
     if (imagePreviews.filter((img) => img !== null).length > 0) {
-      try {
-        console.log("API CALL!");
-        const newsmiles: string[] = [];
-
-        for (const image of imagePreviews) {
-          if (image) {
+      imagePreviews.forEach(async (image, index) => {
+        if (image) {
+          try {
+            console.log("API CALL!");
             const result = await convertImage(image);
             console.log("API result:", result);
-            newsmiles.push(result.smiles); // API結果を保存
-          } else {
-            newsmiles.push(""); // 空の場合は空文字列
+            setsmiles((prev) => {
+              const updated = [...prev];
+              updated[index] = result.smiles;
+              return updated;
+            });
+          } catch (error) {
+            setsmiles((prev) => {
+              const updated = [...prev];
+              updated[index] = "error";
+              return updated;
+            });
+            console.error("API error:", error);
           }
+        } else {
+          setsmiles((prev) => {
+            const updated = [...prev];
+            updated[index] = ""; // 空の場合は空文字列
+            return updated;
+          });
         }
-        setsmiles(newsmiles); // テキストのリストを更新
-      } catch (error) {
-        console.error("APIエラー:", error);
-      }
+      });
     } else {
       console.warn("画像が選択されていません。");
     }

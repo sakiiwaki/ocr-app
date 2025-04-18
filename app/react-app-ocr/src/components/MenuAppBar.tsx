@@ -10,7 +10,7 @@ import { FaBars } from "react-icons/fa";
 
 export default function MenuAppBar() {
   return (
-    <Box bg={useColorModeValue("blue.500", "blue.800")} p="4">
+    <Box bg={useColorModeValue("blue.500", "blue.800")} p="1">
       {/* アプリバー */}
       <Flex align="center" justify="space-between" p="4" borderRadius="md">
         {/* メニューボタン */}
