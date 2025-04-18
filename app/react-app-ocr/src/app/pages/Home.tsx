@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 
-import MenuAppBar from '@components/MenuAppBar';
-import ImagePreview from '@features/ImagePreview';
-import { Container,Text, Card, VStack } from "@yamada-ui/react"
-import { Button } from "@yamada-ui/react"
-import { convertImage } from '@api/ConvertImage';
+import MenuAppBar from "@components/MenuAppBar";
+import ImagePreview from "@features/ImagePreview";
+import { Container, Text, Card, VStack } from "@yamada-ui/react";
+import { Button } from "@yamada-ui/react";
+import { convertImage } from "@api/ConvertImage";
 
 const Home: React.FC = () => {
   const [smiles, setsmiles] = useState<string[]>([]); // テキストのリストを管理
-  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([null]); 
+  const [imagePreviews, setImagePreviews] = useState<(string | null)[]>([null]);
 
   // 画像を設定する関数
   const handleImageSet = useCallback(
@@ -26,41 +26,40 @@ const Home: React.FC = () => {
     []
   );
 
-  
   // convertImage API の呼び出し
   const callConvertImageApi = async () => {
     if (imagePreviews.filter((img) => img !== null).length > 0) {
       try {
-        console.log('API CALL!');
+        console.log("API CALL!");
         const newsmiles: string[] = [];
 
         for (const image of imagePreviews) {
           if (image) {
             const result = await convertImage(image);
-            console.log('API result:', result);
+            console.log("API result:", result);
             newsmiles.push(result.smiles); // API結果を保存
           } else {
-            newsmiles.push(''); // 空の場合は空文字列
+            newsmiles.push(""); // 空の場合は空文字列
           }
         }
         setsmiles(newsmiles); // テキストのリストを更新
       } catch (error) {
-        console.error('APIエラー:', error);
+        console.error("APIエラー:", error);
       }
     } else {
-      console.warn('画像が選択されていません。');
+      console.warn("画像が選択されていません。");
     }
   };
 
   return (
     <>
-     {/* ヘッダー */}
-      <MenuAppBar/>
+      {/* ヘッダー */}
+      <MenuAppBar />
 
       {/* 画像コンポーネントのインポートと表示 */}
       <Container centerContent size="sm">
         <VStack>
-           {imagePreviews.map((image, index) => (
+          {imagePreviews.map((image, index) => (
             <Card key={index}>
               <ImagePreview
                 image={image}
@@ -75,7 +74,9 @@ const Home: React.FC = () => {
 
       {/* 変換ボタン */}
       <Container centerContent>
-        <Button colorScheme="emerald" onClick={callConvertImageApi}>変換</Button>
+        <Button colorScheme="emerald" onClick={callConvertImageApi}>
+          変換
+        </Button>
       </Container>
     </>
   );

@@ -1,24 +1,18 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Box,
   Flex,
   IconButton,
   Text,
   useColorModeValue,
-} from '@yamada-ui/react';
-import { FaBars} from 'react-icons/fa';
+} from "@yamada-ui/react";
+import { FaBars } from "react-icons/fa";
 
 export default function MenuAppBar() {
   return (
-    <Box bg={useColorModeValue('blue.500', 'blue.800')} p="4">
+    <Box bg={useColorModeValue("blue.500", "blue.800")} p="4">
       {/* アプリバー */}
-      <Flex
-        align="center"
-        justify="space-between"
-        bg={useColorModeValue('blue.600', 'blue.900')}
-        p="4"
-        borderRadius="md"
-      >
+      <Flex align="center" justify="space-between" p="4" borderRadius="md">
         {/* メニューボタン */}
         <IconButton
           aria-label="menu"
@@ -27,12 +21,10 @@ export default function MenuAppBar() {
           colorScheme="whiteAlpha"
         />
 
-
         {/* タイトル */}
         <Text fontSize="xl" fontWeight="bold" color="white">
           読み取るさん
         </Text>
-
       </Flex>
     </Box>
   );
